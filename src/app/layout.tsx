@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import navbar from "./components/navbar/navbar";

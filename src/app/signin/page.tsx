@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { Metadata } from "next";
 import { LoginGoogleButton } from "../components/login-button";
 
