@@ -1,17 +1,24 @@
 "use client";
 import { useRef, useState, useTransition } from "react";
 import { useActionState } from "react";
-import { saveRoom } from "@/lib/actions";
+import { updateRoom } from "@/lib/actions";
 import { type PutBlobResult } from "@vercel/blob";
 import { IoCloudUploadOutline, IoTrashOutline } from "react-icons/io5";
 import Image from "next/image";
 import { BarLoader } from "react-spinners";
 import { Amenities } from "@prisma/client";
+import { RoomProps } from "@/types/room";
 import clsx from "clsx";
 
-const EditForm = ({amenities} : {amenities: Amenities[]}) => {
+const EditForm = ({
+    amenities,
+    room
+} : {
+    amenities: Amenities[];
+    room: RoomProps;
+}) => {
     const inputFileRef = useRef<HTMLInputElement>(null);
-    const [image, setImage] = useState("");
+    const [image, setImage] = useState(room.image);
     const [message, setMessage] = useState("");
     const [pending, startTransition] = useTransition();
 
@@ -51,20 +58,22 @@ const EditForm = ({amenities} : {amenities: Amenities[]}) => {
         });
     };
 
-    const [state, formAction, isPending] = useActionState(saveRoom.bind(null, image), null);
+    const [state, formAction, isPending] = useActionState(updateRoom.bind(null, image, room.id), null);
 
-  return (
+    const checkedAmenities = room.RoomAmenities.map((item) => item.amenitiesId);
+
+    return (
     <form action={formAction}>
         <div className="grid md:grid-cols-12 gap-5">
             <div className="col-span-8 bg-white p-4">
                 <div className="mb-4">
-                    <input type="text" name="name" className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Room Name..." />
+                    <input type="text" name="name" defaultValue={room.name} className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Room Name..." />
                     <div aria-live="polite" aria-atomic="true">
                         <span className="text-sm text-red-500 mt-2">{state?.error?.name}</span>
                     </div>
                 </div>
                 <div className="mb-4">
-                    <textarea name="description" rows={8} className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Description"></textarea>
+                    <textarea name="description" rows={8} defaultValue={room.description} className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Description"></textarea>
                     <div aria-live="polite" aria-atomic="true">
                         <span className="text-sm text-red-500 mt-2">{state?.error?.description}</span>
                     </div>
@@ -72,7 +81,7 @@ const EditForm = ({amenities} : {amenities: Amenities[]}) => {
                 <div className="mb-4 grid md:grid-cols-3">
                     {amenities.map((item)=> (
                          <div className="flex items-center mb-4" key={item.id}>
-                        <input type="checkbox" name="amenities" defaultValue={item.id} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded" />
+                        <input type="checkbox" name="amenities" defaultValue={item.id} defaultChecked={checkedAmenities.includes(item.id)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded" />
                     <label className="ms-2 text-sm font-medium text-gray-900 capitalize">
                         {item.name}
                     </label>
@@ -112,13 +121,13 @@ const EditForm = ({amenities} : {amenities: Amenities[]}) => {
                     )}
                 </label>
                 <div className="mb-4">
-                    <input type="text" name="capacity" className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Capacity..." />
+                    <input type="text" name="capacity" defaultValue={room.capacity} className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Capacity..." />
                     <div aria-live="polite" aria-atomic="true">
                         <span className="text-sm text-red-500 mt-2">{state?.error?.capacity}</span>
                     </div>
                 </div>
                 <div className="mb-4">
-                    <input type="text" name="price" className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Price..." />
+                    <input type="text" name="price" defaultValue={room.price} className="py-2 px-4 rounded-sm border border-gray-400 w-full" placeholder="Price..." />
                     <div aria-live="polite" aria-atomic="true">
                         <span className="text-sm text-red-500 mt-2">{state?.error?.price}</span>
                     </div>
