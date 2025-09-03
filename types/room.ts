@@ -4,7 +4,7 @@ export type RoomProps = Prisma.RoomGetPayload<{
     include: { RoomAmenities: { select: { amenitiesId: true } } }
 }>;
 
-export type getRoomDetailProps = Prisma.RoomGetPayload<{
+export type RoomDetailProps = Prisma.RoomGetPayload<{
     include: { 
             RoomAmenities: { 
                include: {
