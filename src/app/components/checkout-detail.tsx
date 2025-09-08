@@ -2,6 +2,7 @@ import Image from "next/image"
 import { getReservationById } from "@/lib/data"
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { differenceInCalendarDays, DifferenceInCalendarDaysOptions } from "date-fns";
+import PaymentButton from "./payment-button";
 
 const CheckoutDetail = async ({reservationId}: {reservationId: string}) => {
     const reservation = await getReservationById(reservationId);
@@ -13,15 +14,22 @@ const CheckoutDetail = async ({reservationId}: {reservationId: string}) => {
     <div className="grid md:grid-cols-2 gap-5">
         <div className="order-2">
             <div className="flex flex-col mb-3 items-start bg-white border border-gray-200 rounded-sm md:flex-row md:w-full">
-                <div className="aspect-video relative">
+                {/* <div className="aspect-video relative">
                     <Image src={reservation.Room.image} width={500} height={300} className="object-cover w-full rounded-t-sm aspect-video md:rounded-none md:rounded-s-sm" alt="image" />
+                </div> */}
+                 <div className="relative w-full md:w-70 h-42 flex-shrink-0"> 
+                    <Image 
+                        src={reservation.Room.image} 
+                        alt={reservation.Room.name} 
+                        fill 
+                        className="object-cover rounded-t-sm md:rounded-none md:rounded-s-sm" />
                 </div>
                 <div className="flex flex-col justify-between p-4 leading-normal w-full">
                     <h5 className="mb-1 text-4xl font-bold tracking-tight text-gray-900">{reservation.Room.name}</h5>
                     <div className="flex items-center gap-1 text-2xl text-gray-700">
                         <div className="flex items-center justify-center gap-1">
                             <span className="text-2xl">
-                                {reservation.price}
+                                {formatCurrency(reservation.price)}
                             </span>
                             <span>/night</span>
                         </div>
@@ -29,6 +37,7 @@ const CheckoutDetail = async ({reservationId}: {reservationId: string}) => {
                 </div>
             </div>
             {/* Payment button */}
+            <PaymentButton reservation={reservation} />
         </div>
         <div className="border border-gray-200 px-3 py-5 bg-white rounded-sm">
             <table className="w-full">
