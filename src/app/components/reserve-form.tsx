@@ -17,16 +17,22 @@ const ReserveForm = ( {
     const StartDate = new Date();
     const EndDate = addDays(StartDate, 1);
 
-    const [startDate, setStartDate] = useState(StartDate);
-    const [endDate, setEndDate] = useState(EndDate);
+    const [startDate, setStartDate] = useState<Date | null>(StartDate);
+    const [endDate, setEndDate] = useState<Date | null>(EndDate);
 
     const handleDateChange = (dates: [Date | null, Date | null]) => {
         const [start, end] = dates;
-        setStartDate(start ?? StartDate);
-        setEndDate(end ?? EndDate);
-    }
+
+        if (start && end && start > end) {
+            setStartDate(end);
+            setEndDate(start);
+        } else {
+            setStartDate(start);
+            setEndDate(end);
+        }
+    };
   
-    const [state, formAction, isPending] = useActionState(createReserve.bind(null, room.id, room.price, startDate, endDate), null);
+    const [state, formAction, isPending] = useActionState(createReserve.bind(null, room.id, room.price, startDate ?? new Date(), endDate ?? new Date()), null);
 
     const excludeDates = disabledDate.map((item) => {
         return {
@@ -48,7 +54,7 @@ const ReserveForm = ( {
                     selectsRange={true}
                     onChange={handleDateChange}
                     excludeDateIntervals={excludeDates}
-                    dateFormat={"dd-MM-YYYY"}
+                    dateFormat={"dd-MM-yyyy"}
                     wrapperClassName="w-full"
                     className="py-2 px-4 rounded-md border border-gray-300 w-full"
                 />
